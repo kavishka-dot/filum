@@ -1,0 +1,57 @@
+# Doxyfile for Filum
+
+PROJECT_NAME           = "Filum"
+PROJECT_NUMBER         = "0.2.0"
+PROJECT_BRIEF          = "Federated learning for MCU-class edge devices over LoRa"
+PROJECT_LOGO           =
+
+OUTPUT_DIRECTORY       = docs/api
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+
+# Input
+INPUT                  = common/include \
+                         shard/include  \
+                         herald/include \
+                         shard/hal/hal.h
+FILE_PATTERNS          = *.h
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */build/* */examples/*
+
+# Extraction
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+
+# Output formats
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_DYNAMIC_SECTIONS  = YES
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+
+# Diagrams (requires Graphviz)
+HAVE_DOT               = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+# Source browsing
+SOURCE_BROWSER         = NO
+INLINE_SOURCES         = NO
+
+# Warnings
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+
+# Preprocessing
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+PREDEFINED             = FL_MODEL_MAX_PARAMS=4096 \
+                         FL_MODEL_MAX_LAYERS=16 \
+                         FL_SPARSE_MAX_ENTRIES=1024 \
+                         FL_AGG_MEDIAN_MAX_SHARDS=64 \
+                         FL_POOL_MAX_SHARDS=64 \
+                         FL_POOL_MAX_FRAGS=32

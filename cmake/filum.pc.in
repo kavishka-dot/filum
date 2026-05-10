@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: Filum
+Description: Federated Learning for MCU-class Edge Devices over LoRa
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lfl_common -lfl_shard -lfl_herald -lm
+Cflags: -I${includedir}/filum

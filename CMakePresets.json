@@ -1,0 +1,75 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "host",
+      "displayName": "Host (Ninja - recommended)",
+      "description": "Build Herald + tests. Uses Ninja generator, works with any compiler.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "FILUM_TARGET": "host",
+        "FILUM_ENABLE_TESTS": "ON",
+        "FILUM_ENABLE_ASAN": "OFF"
+      }
+    },
+    {
+      "name": "host-vs2026",
+      "displayName": "Host (Visual Studio 2026 / v18)",
+      "description": "Build Herald + tests using VS 2026 Build Tools (v180 toolset)",
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/build-vs",
+      "cacheVariables": {
+        "FILUM_TARGET": "host",
+        "FILUM_ENABLE_TESTS": "ON",
+        "FILUM_ENABLE_ASAN": "OFF"
+      }
+    },
+    {
+      "name": "host-vs2022",
+      "displayName": "Host (Visual Studio 2022 / v17)",
+      "description": "Build Herald + tests using VS 2022 Build Tools (v143 toolset)",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build-vs22",
+      "cacheVariables": {
+        "FILUM_TARGET": "host",
+        "FILUM_ENABLE_TESTS": "ON",
+        "FILUM_ENABLE_ASAN": "OFF"
+      }
+    },
+    {
+      "name": "stm32f411",
+      "displayName": "STM32F411 firmware",
+      "description": "Cross-compile shard firmware (requires arm-none-eabi-gcc in PATH)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-stm32",
+      "cacheVariables": {
+        "FILUM_TARGET": "STM32F411",
+        "FILUM_ENABLE_TESTS": "OFF",
+        "FILUM_ENABLE_ASAN": "OFF"
+      }
+    },
+    {
+      "name": "stm32f103",
+      "displayName": "STM32F103 firmware",
+      "description": "Cross-compile shard firmware (requires arm-none-eabi-gcc in PATH)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-stm32f103",
+      "cacheVariables": {
+        "FILUM_TARGET": "STM32F103",
+        "FILUM_ENABLE_TESTS": "OFF",
+        "FILUM_ENABLE_ASAN": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "host",       "configurePreset": "host" },
+    { "name": "host-vs2026","configurePreset": "host-vs2026" },
+    { "name": "host-vs2022","configurePreset": "host-vs2022" },
+    { "name": "stm32f411",  "configurePreset": "stm32f411" },
+    { "name": "stm32f103",  "configurePreset": "stm32f103" }
+  ],
+  "testPresets": [
+    { "name": "host", "configurePreset": "host", "output": { "outputOnFailure": true } }
+  ]
+}

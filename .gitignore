@@ -1,0 +1,11 @@
+build/
+build_stm32/
+*.o
+*.a
+*.elf
+*.bin
+*.hex
+*.map
+/tmp/filum_shard.nvs
+.cache/
+compile_commands.json

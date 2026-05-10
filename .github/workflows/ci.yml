@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake gcc lcov doxygen
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DFILUM_TARGET=host \
+            -DFILUM_ENABLE_ASAN=OFF \
+            -DFILUM_ENABLE_TESTS=ON \
+            -DCMAKE_C_FLAGS="--coverage -O0 -g"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: cd build && ctest --output-on-failure
+
+      - name: Demo
+        run: ./build/filum_demo
+
+      - name: Coverage
+        run: |
+          lcov --capture \
+               --directory build \
+               --output-file coverage.info \
+               --ignore-errors mismatch
+          lcov --remove coverage.info \
+               '/usr/*' '*/tests/*' '*/examples/*' \
+               --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.info
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Doxygen
+        run: |
+          cd $GITHUB_WORKSPACE
+          doxygen docs/Doxyfile 2>&1 | grep -v "^$" || true
+          echo "Doxygen complete"
+
+  build-presets:
+    name: Memory Presets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        preset: [TINY, SMALL, LARGE]
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y cmake gcc
+      - name: Build ${{ matrix.preset }}
+        run: |
+          cmake -B build_${{ matrix.preset }} \
+            -DFILUM_TARGET=host \
+            -DFILUM_ENABLE_TESTS=ON \
+            -DFL_CONFIG_PRESET_${{ matrix.preset }}=1
+          cmake --build build_${{ matrix.preset }}
+          cd build_${{ matrix.preset }} && ctest --output-on-failure
