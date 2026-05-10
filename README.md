@@ -11,9 +11,9 @@
 
 **Federated learning for MCU-class edge devices over LoRa.**
 
-Filum is a pure C99 library that enables on-device federated learning on microcontrollers communicating over LoRa radio. A **Shard** (STM32F411) trains on private local sensor data and transmits sparse gradient updates over LoRa. A **Herald** (Linux, Raspberry Pi) coordinates rounds, aggregates updates, and distributes the improved global model back to all shards.
+Filum is a pure C99 library for on-device federated learning on microcontrollers that communicate over LoRa radio. A **Shard** running on an STM32F411 trains on private local sensor data and transmits sparse gradient updates over LoRa. A **Herald** running on Linux or a Raspberry Pi coordinates training rounds, aggregates updates, and sends the improved global model back to the shards.
 
-No Python. No dynamic allocation. No heap. Runs on 128 KB of RAM.
+No Python runtime. No dynamic allocation. No heap usage. Designed to run within a 128 KB RAM budget.
 
 ---
 
@@ -35,16 +35,16 @@ No Python. No dynamic allocation. No heap. Runs on 128 KB of RAM.
 
 ## Features
 
-- **Pure C99** — no C++, no RTOS dependency, no stdlib heap
-- **Zero dynamic allocation** — all buffers are compile-time static
-- **LoRa-native** — wire format designed around LoRa payload constraints (SF7–SF12)
-- **Q8 sparse gradients** — top-k selection + Q8 quantization; ~5.5× compression vs dense float
-- **Federated aggregation** — FedAvg, FedProx, coordinate-wise median (Byzantine-robust)
-- **Differential privacy** — per-shard Gaussian mechanism with (ε, δ)-DP guarantee and budget tracking
-- **ECDH encryption** — Curve25519 key exchange + ChaCha20-Poly1305 authenticated encryption
-- **HAL abstraction** — shard logic is hardware-independent via a struct of function pointers
-- **Configurable memory** — four presets from 2 KB (STM32F103) to 1 MB (Herald Linux)
-- **Tested** — 9 unit and integration tests, CI on every push, Codecov coverage reporting
+- **Pure C99:** no C++, no RTOS dependency, no stdlib heap
+- **Zero dynamic allocation:** all buffers are compile-time static
+- **LoRa-native:** wire format designed around LoRa payload constraints, from SF7 to SF12
+- **Q8 sparse gradients:** top-k selection with Q8 quantization, giving about 5.5× compression compared with dense float updates
+- **Federated aggregation:** FedAvg, FedProx, and coordinate-wise median aggregation for Byzantine robustness
+- **Differential privacy:** per-shard Gaussian mechanism with an (ε, δ)-DP guarantee and budget tracking
+- **ECDH encryption:** Curve25519 key exchange with ChaCha20-Poly1305 authenticated encryption
+- **HAL abstraction:** shard logic stays hardware-independent through a struct of function pointers
+- **Configurable memory:** four presets ranging from 2 KB for STM32F103 to 1 MB for Herald Linux
+- **Tested:** 9 unit and integration tests, CI on every push, and Codecov coverage reporting
 
 ---
 
@@ -67,7 +67,7 @@ No Python. No dynamic allocation. No heap. Runs on 128 KB of RAM.
 | CMake | ≥ 3.20 | |
 | OpenOCD | any | for flashing |
 
-### Hardware (optional — all tests run without it)
+### Hardware (optional, all tests run without it)
 
 - STM32F411 Blackpill (or STM32F103 Blue Pill)
 - RFM95W (SX1276, 868 MHz EU / 915 MHz US)
@@ -114,7 +114,7 @@ Expected output:
 ./build/filum_demo
 ```
 
-Runs a complete FL loop — Herald + Shard + synthetic dataset — entirely in memory. No hardware needed.
+Runs a complete FL loop with Herald, Shard, and a synthetic dataset entirely in memory. No hardware is needed.
 
 ```
 =======================================================
@@ -193,7 +193,7 @@ cmake -B build -DFL_MODEL_MAX_PARAMS=256 -DFL_SPARSE_MAX_ENTRIES=64
 |---|---|---|
 | `FILUM_ENABLE_TESTS` | `ON` | Build unit tests (host only) |
 | `FILUM_ENABLE_ASAN` | `OFF` | AddressSanitizer (GCC/Clang) |
-| `FILUM_LORA_SF` | `7` | LoRa spreading factor (7–12) |
+| `FILUM_LORA_SF` | `7` | LoRa spreading factor, from 7 to 12 |
 
 ### Install
 
@@ -202,8 +202,8 @@ cmake --install build --prefix /usr/local
 ```
 
 Installs headers to `include/filum/`, libraries to `lib/`, and generates:
-- `lib/pkgconfig/filum.pc` — use via `pkg-config --libs filum`
-- `lib/cmake/Filum/FilumConfig.cmake` — use via `find_package(Filum)`
+- `lib/pkgconfig/filum.pc`: use via `pkg-config --libs filum`
+- `lib/cmake/Filum/FilumConfig.cmake`: use via `find_package(Filum)`
 
 ### Documentation
 
@@ -489,8 +489,8 @@ typedef struct {
 ```
 
 Provided implementations:
-- [`shard/hal/stm32/`](shard/hal/stm32/) — STM32F4 with SX1276 via SPI1
-- [`shard/hal/host/`](shard/hal/host/) — Linux loopback for host testing
+- [`shard/hal/stm32/`](shard/hal/stm32/): STM32F4 with SX1276 via SPI1
+- [`shard/hal/host/`](shard/hal/host/): Linux loopback for host testing
 
 For a complete porting walkthrough, see [`docs/porting.md`](docs/porting.md).
 
@@ -524,7 +524,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for build setup, code style, and the PR c
 Quick summary:
 - All 9 tests must pass: `cd build && ctest --output-on-failure`
 - Every new public function needs Doxygen `@param` / `@retval` comments
-- No dynamic allocation — use static buffers or return `FL_ERR_CAPACITY`
+- No dynamic allocation: use static buffers or return `FL_ERR_CAPACITY`
 - Update [CHANGELOG.md](CHANGELOG.md) under `[Unreleased]`
 
 To report a security vulnerability, see [SECURITY.md](SECURITY.md). Do not open a public issue.
